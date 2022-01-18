@@ -1,0 +1,206 @@
+require './input_functions'
+
+# It is suggested that you put together code from your 
+# previous tasks to start this. eg:
+# TT3.2 Simple Menu Task
+# TT5.1 Music Records
+# TT5.2 Track File Handling
+# TT6.1 Album file handling
+
+require './input_functions'
+
+module Genre
+    POP, CLASSIC, JAZZ, ROCK = *1..4
+  end
+  
+  $genre_names = ['Null', 'Pop', 'Classic', 'Jazz', 'Rock']
+
+  class Album
+    attr_accessor :title, :artist, :genre, :tracks
+
+    def initialize (title, artist, genre, tracks)
+        @title = title
+        @artist = artist
+        @genre = genre
+        @tracks = Array.new()
+    end
+end
+
+class Track
+  attr_accessor :name, :location
+
+  def initialize (name, location)
+      @name = name
+      @location = location
+  end
+end
+
+def read_track(music_file)
+    name = music_file.gets().chomp
+    location = music_file.gets().chomp
+    track = Track.new(name,location)
+end
+
+def read_tracks(music_file, count)
+    tracks = Array.new
+    i=0
+  while i < count
+    track = read_track(music_file)
+    tracks << track 
+    i+=1
+  end
+    return tracks
+
+end
+  
+def print_track(track,i)
+    puts(track.name)
+    puts(track.location)
+end
+
+def print_tracks(tracks)
+    x = 0
+    while index < tracks.length
+    print_track(tracks[x],x+1)
+    x += 1
+    end
+end
+
+def read_album(music_file)
+    album = Album.new
+    album_title = music_file.gets()
+    album_artist = music_file.gets()
+    album_genre = music_file.gets.to_i()
+    track_count = music_file.gets.to_i()
+    album = Album.new(album_title, album_artist, album_genre, album_tracks)
+    if track_count < 15 then
+        tracks = read_tracks(music_file,track_count)
+	  album = Album.new()
+	  album.title = album_title
+	  album.artist = album_artist
+	  album.genre = album_genre
+	  album.tracks = tracks
+	  return album
+	else
+		puts("Please reselect a file.")		
+	end
+end
+
+def read_in_albums(music_file, count)
+    albums = Array.new
+    i=0
+  while i < count
+    track = read_album(music_file)
+    albums << album 
+    i+=1
+  end
+    return albums
+
+def print_album(album,id)
+    puts("ALBUM ID: " + id.to_s.chomp)
+    puts(album.title + " by " + album.artist)
+	puts('Genre is ' + $genre_names[album.genre] )
+
+end
+
+def print_albums(albums)
+    option = read_integer_in_range("1 - Display all \n2 - Display genre",1,2)
+	if option == 1 then
+	  i = 0
+	  while i < albums.length do
+		print_album(albums[i],i+1)
+		i += 1
+	  end
+	elsif option == 2 then
+		genre = read_integer_in_range("Select Genre \n1 - Pop\n2 - Classic\n3 - Jazz\n4 - Rock ",1,4)
+		i = 0
+		while i < albums.length do
+			if albums[i].genre == genre then 
+				print_album(albums[i],i+1)
+			end 
+			i += 1
+		end
+	end
+
+end
+
+def play_track(album)
+	length = album.tracks.length
+	i = read_integer_in_range("enter track number: ",1,length)
+	puts("Playing track " + album.tracks[i-1].name.chomp + " from album " + album.title.chomp)
+	return i-1
+end
+
+def play_album(albums)
+	length = albums.length
+	album_index = read_integer_in_range("Enter album ID:",1,length) - 1
+	album = albums[album_index]
+	print_tracks(album.tracks)
+    track_id = play_track(album)
+    return album_index,track_id, album
+end
+
+def update_album_title(album)
+	new_title = read_string("Enter new title: ")
+	album.title = new_title
+	return album.title
+end
+def update_album_genre(album)
+	new_genre = read_integer_in_range("Enter new genre between 1 - 4",1,4)
+	album.genre = new_genre
+	return album.genre 
+end	
+
+def update_album(albums)
+	length = albums.length
+	index = read_integer_in_range("Album ID: ",1, length)
+	album = albums[index-1]
+	option = 0
+	puts("Maintain Albums Menu:")
+    puts("1 - To Update Album Title\n")
+    puts("2 - To Update Album Genre\n")
+    puts("3 - Return")
+	if option == "1" then
+      album.title = update_album_title(album)
+	elsif option == "2"
+      album.genre = update_album_genre(album)
+	elsif option == "3"
+		finished = true
+	else 
+		puts("Entry Void")
+	end
+  print_album(album,index)
+  return albums
+end
+
+def main()
+    music_file = File.new("album.txt", "r")
+	tracks = read_tracks(music_file)
+  	music_file.close()
+    finished == false
+    begin
+    puts("1 - Read in Albums")
+    puts("2 - Display Albums")
+	puts("3 - Select an Album to play")
+	puts("4 - Update an existing Album")
+    puts("5 - Exit the application")
+    choice = read_integer_in_range('Please enter your choice:', 1, 5)
+    case choice
+    when 1
+        read_album(music_file)
+    when 2
+        print_album(album)
+    when 3
+        play_existing_album(album)
+    when 4
+        maintain_album(album)
+    when 5
+        puts('Goodbye!')
+        exit
+    else
+        puts('Please select again')
+  end until finished
+    end
+  end
+  
+end
